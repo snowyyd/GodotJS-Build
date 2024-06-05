@@ -49,8 +49,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip bin/godot.*
-          chmod +x bin/godot.*
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
   
       - name: Upload
         uses: actions/upload-artifact@v4
