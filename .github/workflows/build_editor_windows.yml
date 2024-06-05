@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Godot Editor - Windows
+name: windows
 
 # Controls when the workflow will run
 on:
@@ -44,12 +44,11 @@ jobs:
       - name: Build Godot
         run: |
           cd godot
-          dir modules
           scons dev_build=yes p=windows
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           path: godot/bin/*.*
-          name: prebuilt_godot_editor
+          name: prebuilt_godot_editor_windows
         
