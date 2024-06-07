@@ -49,7 +49,7 @@ jobs:
           cp $GITHUB_WORKSPACE/Scripts/v8.macos_arm64.args.gn $GITHUB_WORKSPACE/v8/v8/out.gn/args.gn
           ls -l $GITHUB_WORKSPACE/depot_tools/ninja 
           ls -l $GITHUB_WORKSPACE/depot_tools/autoninja 
-          python ./tools/dev/gm.py arm64.release v8_monolith
+          ninja -C ./out.gn/arm64.release v8_monolith
 
       - name: Upload
         uses: actions/upload-artifact@v4
