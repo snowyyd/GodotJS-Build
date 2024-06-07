@@ -28,30 +28,32 @@ jobs:
       - name: Fetch v8
         shell: cmd
         run: |
-          cd $GITHUB_WORKSPACE
-          echo $PATH
+          cd %GITHUB_WORKSPACE%
+          echo %GITHUB_WORKSPACE%
+          echo %PATH%
+          
           curl https://storage.googleapis.com/chrome-infra/depot_tools.zip --output ./depot_tools.zip
           7z x -odepot_tools depot_tools.zip
-          set PATH=$GITHUB_WORKSPACE/depot_tools;$PATH
+          set PATH=%GITHUB_WORKSPACE%/depot_tools;%PATH%
           cd depot_tools
-          gclient
-          mkdir $GITHUB_WORKSPACE/v8
-          cd $GITHUB_WORKSPACE/v8
-          fetch v8
+          call gclient
+          mkdir %GITHUB_WORKSPACE%/v8
+          cd %GITHUB_WORKSPACE%/v8
+          call fetch v8
           cd v8
           git checkout refs/tags/12.4.254.20
-          gclient sync
+          call gclient sync
 
       - name: Build v8 x64
         run: |
-          set PATH=$GITHUB_WORKSPACE/depot_tools;$PATH
-          cd $GITHUB_WORKSPACE/v8/v8
+          set PATH=%GITHUB_WORKSPACE%/depot_tools;%PATH%
+          cd %GITHUB_WORKSPACE%/v8/v8
           python ./tools/dev/v8gen.py x64.release
-          xcopy $GITHUB_WORKSPACE/Scripts/v8.windows_x64.args.gn $GITHUB_WORKSPACE/v8/v8/out.gn/x64.release/args.gn /Q /R /Y
-          dir $GITHUB_WORKSPACE/depot_tools/ninja 
-          dir $GITHUB_WORKSPACE/depot_tools/autoninja 
-          ninja -C ./out.gn/x64.release v8_monolith
-          dir $GITHUB_WORKSPACE/v8/v8/out.gn/x64.release/obj/*.lib
+          xcopy %GITHUB_WORKSPACE%/Scripts/v8.windows_x64.args.gn %GITHUB_WORKSPACE%/v8/v8/out.gn/x64.release/args.gn /Q /R /Y
+          dir %GITHUB_WORKSPACE%/depot_tools/ninja 
+          dir %GITHUB_WORKSPACE%/depot_tools/autoninja 
+          call ninja -C ./out.gn/x64.release v8_monolith
+          dir %GITHUB_WORKSPACE%/v8/v8/out.gn/x64.release/obj/*.lib
 
       - name: Upload
         uses: actions/upload-artifact@v4
