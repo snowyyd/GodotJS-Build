@@ -27,7 +27,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Fetch v8
         run: |
-          sudo apt-get install generate-ninja pkg-config
+          sudo apt-get install -y ninja-build generate-ninja pkg-config
           cat $GITHUB_WORKSPACE/Scripts/v8.linux_x64.args.gn
 
           cd $GITHUB_WORKSPACE
