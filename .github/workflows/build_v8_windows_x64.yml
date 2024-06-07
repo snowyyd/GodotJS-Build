@@ -31,7 +31,12 @@ jobs:
           cd %GITHUB_WORKSPACE%
           echo %GITHUB_WORKSPACE%
           echo %PATH%
-          
+
+          git config --global core.autocrlf false
+          git config --global core.filemode false
+          git config --global branch.autosetuprebase always
+          git config --global core.longpaths true
+
           curl https://storage.googleapis.com/chrome-infra/depot_tools.zip --output ./depot_tools.zip
           7z x -odepot_tools depot_tools.zip
           set PATH=%GITHUB_WORKSPACE%/depot_tools;%PATH%
@@ -45,6 +50,7 @@ jobs:
           call gclient sync
 
       - name: Build v8 x64
+        shell: cmd
         run: |
           set PATH=%GITHUB_WORKSPACE%/depot_tools;%PATH%
           cd %GITHUB_WORKSPACE%/v8/v8
