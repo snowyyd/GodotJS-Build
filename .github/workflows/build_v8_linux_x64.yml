@@ -48,6 +48,7 @@ jobs:
           sh ./build/install-build-deps.sh
           python ./tools/dev/v8gen.py x64.release
           cp $GITHUB_WORKSPACE/Scripts/v8.linux_x64.args.gn $GITHUB_WORKSPACE/v8/v8/out.gn/args.gn
+          ls -l $GITHUB_WORKSPACE/v8/v8/out.gn/
           ninja -C ./out.gn/x64.release v8_monolith
 
       - name: Upload
