@@ -41,23 +41,19 @@ jobs:
           7z x -odepot_tools depot_tools.zip
           set PATH=%GITHUB_WORKSPACE%/depot_tools;%PATH%
           set DEPOT_TOOLS_WIN_TOOLCHAIN=0
-          
+
           cd depot_tools
           call gclient
-          mkdir %GITHUB_WORKSPACE%/v8
-          cd %GITHUB_WORKSPACE%/v8
+          
+          cd ..
+          mkdir v8
+          cd v8
           call fetch v8
           cd v8
           git checkout refs/tags/12.4.254.20
           call gclient sync
+          cd
 
-      - name: Build v8 x64
-        shell: cmd
-        run: |
-          set PATH=%GITHUB_WORKSPACE%/depot_tools;%PATH%
-          set DEPOT_TOOLS_WIN_TOOLCHAIN=0
-
-          cd %GITHUB_WORKSPACE%/v8/v8
           python ./tools/dev/v8gen.py x64.release
           xcopy %GITHUB_WORKSPACE%/Scripts/v8.windows_x64.args.gn %GITHUB_WORKSPACE%/v8/v8/out.gn/x64.release/args.gn /Q /R /Y
           dir %GITHUB_WORKSPACE%/depot_tools/ninja 
