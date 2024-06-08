@@ -61,9 +61,10 @@ jobs:
           echo _____ninja_____
           call python .\tools\dev\v8gen.py x64.release
           echo _____xcopy_____
-          xcopy %GITHUB_WORKSPACE%\Scripts\v8.windows_x64.args.gn %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\args.gn /Q /R /Y
+          xcopy %GITHUB_WORKSPACE%\Scripts\v8.windows_x64.args.gn %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\args.gn /Q /R /Y /F
           echo _____list_____
           dir .\out.gn\x64.release
+          more .\out.gn\x64.release\args.gn
           echo _____build_____
           call ninja -C .\out.gn\x64.release v8_monolith
           echo _____results_____
