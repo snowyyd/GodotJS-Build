@@ -48,11 +48,13 @@ jobs:
           cd ..
           mkdir v8
           cd v8
+          echo _____fetch_____
           call fetch v8
+          echo _____enter_____
           cd v8
-          git checkout refs/tags/12.4.254.20
           echo _____sync_____
           dir .\tools\dev\v8gen.py
+          git checkout refs/tags/12.4.254.20
           call gclient sync
 
           echo _____ninja_____
