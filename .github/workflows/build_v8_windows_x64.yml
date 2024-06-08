@@ -54,7 +54,7 @@ jobs:
           echo _____enter_____
           cd v8
           echo _____checkout_____
-          git checkout refs/tags/12.4.254.20
+          call git checkout refs/tags/12.4.254.20
           echo _____sync_____
           call gclient sync
 
