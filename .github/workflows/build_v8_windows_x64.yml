@@ -43,26 +43,26 @@ jobs:
           set DEPOT_TOOLS_WIN_TOOLCHAIN=0
 
           cd depot_tools
-          call gclient
+          gclient
           
           cd ..
           mkdir v8
           cd v8
           echo _____fetch_____
-          call fetch v8
+          fetch v8
           echo _____enter_____
           cd v8
-          echo _____sync_____
-          dir .\tools\dev\v8gen.py
+          echo _____checkout_____
           git checkout refs/tags/12.4.254.20
-          call gclient sync
+          echo _____sync_____
+          gclient sync
 
           echo _____ninja_____
           python .\tools\dev\v8gen.py x64.release
           xcopy %GITHUB_WORKSPACE%\Scripts\v8.windows_x64.args.gn %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\args.gn /Q /R /Y
           dir %GITHUB_WORKSPACE%\depot_tools\ninja 
           dir %GITHUB_WORKSPACE%\depot_tools\autoninja 
-          call ninja -C .\out.gn\x64.release v8_monolith
+          ninja -C .\out.gn\x64.release v8_monolith
           dir %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\obj\*.lib
 
       - name: Upload
