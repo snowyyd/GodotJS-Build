@@ -51,16 +51,16 @@ jobs:
           call fetch v8
           cd v8
           git checkout refs/tags/12.4.254.20
-          echo ====== sync
+          echo _____sync_____
+          dir .\tools\dev\v8gen.py
           call gclient sync
-          cd
 
-          echo ====== ninja
-          python ./tools/dev/v8gen.py x64.release
+          echo _____ninja_____
+          python .\tools\dev\v8gen.py x64.release
           xcopy %GITHUB_WORKSPACE%\Scripts\v8.windows_x64.args.gn %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\args.gn /Q /R /Y
           dir %GITHUB_WORKSPACE%\depot_tools\ninja 
           dir %GITHUB_WORKSPACE%\depot_tools\autoninja 
-          call ninja -C ./out.gn/x64.release v8_monolith
+          call ninja -C .\out.gn\x64.release v8_monolith
           dir %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\obj\*.lib
 
       - name: Upload
