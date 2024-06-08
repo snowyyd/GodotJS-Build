@@ -59,11 +59,14 @@ jobs:
           call gclient sync
 
           echo _____ninja_____
-          python .\tools\dev\v8gen.py x64.release
+          call python .\tools\dev\v8gen.py x64.release
+          echo _____xcopy_____
           xcopy %GITHUB_WORKSPACE%\Scripts\v8.windows_x64.args.gn %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\args.gn /Q /R /Y
-          dir %GITHUB_WORKSPACE%\depot_tools\ninja 
-          dir %GITHUB_WORKSPACE%\depot_tools\autoninja 
+          echo _____list_____
+          dir .\out.gn\x64.release
+          echo _____build_____
           call ninja -C .\out.gn\x64.release v8_monolith
+          echo _____results_____
           dir %GITHUB_WORKSPACE%\v8\v8\out.gn\x64.release\obj\*.lib
 
       - name: Upload
