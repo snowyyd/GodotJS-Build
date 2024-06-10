@@ -31,7 +31,7 @@ jobs:
 
       - name: Deps
         run: |
-          curl https://github.com/ialex32x/GodotJS-Dependencies/releases/download/v8_r6/v8_r6.zip -o v8.zip
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/v8_r6/v8_r6.zip -OutFile v8.zip
           dir v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
           dir godot/modules/GodotJS/v8
