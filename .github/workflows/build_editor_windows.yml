@@ -10,7 +10,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  prebuilt_godot_editor_windows:
     # The type of runner that the job will run on
     runs-on: windows-latest
 
@@ -37,8 +37,10 @@ jobs:
       - name: Prerequisites
         run: pip install scons
 
-      - name: Build Deps
-        run: echo nothing here for now
+      - name: Deps
+        run: |
+          curl https://github.com/ialex32x/GodotJS-Dependencies/releases/download/v8_r6/v8_r6.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
 
       # Runs a set of commands using the runners shell
       - name: Build Godot
@@ -51,4 +53,40 @@ jobs:
         with: 
           path: godot/bin/*.*
           name: prebuilt_godot_editor_windows
-        
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: 
+      - prebuilt_godot_editor_windows
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: godot_editor/
+          merge-multiple: true
+
+      - name: packaging
+        run: |
+          sudo apt-get install zip unzip
+
+          ls -R godot_editor
+          zip -r godot_editor_${{ github.event.inputs.bundle_tag }}.zip godot_editor/
+
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with: 
+          tag_name: godot_editor_${{ github.event.inputs.bundle_tag }}
+          release_name: godot_editor_${{ github.event.inputs.bundle_tag }}
+          draft: false
+          prerelease: false
+          body: |
+            update godot editor
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with: 
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: godot_editor_${{ github.event.inputs.bundle_tag }}.zip
+          asset_name: godot_editor_${{ github.event.inputs.bundle_tag }}.zip
+          asset_content_type: application/zip
