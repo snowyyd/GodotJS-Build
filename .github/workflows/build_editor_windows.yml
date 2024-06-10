@@ -29,6 +29,13 @@ jobs:
           path: godot/modules/GodotJS
           lfs: true
 
+      - name: Deps
+        run: |
+          curl https://github.com/ialex32x/GodotJS-Dependencies/releases/download/v8_r6/v8_r6.zip -o v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -36,11 +43,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Prerequisites
         run: pip install scons
-
-      - name: Deps
-        run: |
-          curl https://github.com/ialex32x/GodotJS-Dependencies/releases/download/v8_r6/v8_r6.zip --output v8.zip
-          7z x -ogodot/modules/GodotJS v8.zip
 
       # Runs a set of commands using the runners shell
       - name: Build Godot
