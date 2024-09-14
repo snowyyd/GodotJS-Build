@@ -48,7 +48,7 @@ jobs:
 
       - name: Build Deps
         run: |
-          curl https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
 
       # Runs a set of commands using the runners shell
