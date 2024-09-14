@@ -11,12 +11,18 @@ on:
         description: 'package version tag'
         required: true
 
+      deps_package_tag:
+        description: 'deps package tag'
+        type: string
+        required: true
+        default: "v8_r11"
+      
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   prebuilt_godot_editor_windows:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -35,7 +41,7 @@ jobs:
 
       - name: Deps
         run: |
-          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/v8_r6/v8_r6.zip -OutFile v8.zip
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
           dir v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
           dir godot/modules/GodotJS/v8
@@ -57,8 +63,8 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          path: godot/bin/*.*
           name: prebuilt_godot_editor_windows
+          path: godot/bin/*.*
 
   publish:
     runs-on: ubuntu-latest

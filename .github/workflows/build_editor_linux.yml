@@ -6,13 +6,19 @@ name: linux
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      deps_package_tag:
+        description: 'deps package tag'
+        type: string
+        required: true
+        default: "v8_r11"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  prebuilt_godot_editor_linux:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -42,7 +48,7 @@ jobs:
 
       - name: Build Deps
         run: |
-          curl https://github.com/ialex32x/GodotJS-Dependencies/releases/download/v8_r6/v8_r6.zip --output v8.zip
+          curl https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
 
       # Runs a set of commands using the runners shell
