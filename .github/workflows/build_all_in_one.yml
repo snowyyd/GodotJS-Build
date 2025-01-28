@@ -499,7 +499,7 @@ jobs:
         
   editor_macos_arm64_jsc:
     # The type of runner that the job will run on
-    runs-on: macos-14
+    runs-on: macos-15
     if: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
