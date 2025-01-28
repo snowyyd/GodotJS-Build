@@ -25,7 +25,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  prebuilt_godot_editor_windows:
+  editor_windows_x64_v8:
     # The type of runner that the job will run on
     runs-on: windows-2019
 
@@ -67,15 +67,116 @@ jobs:
 
       - name: Prepare artifact
         run: |          
-          7z a -tzip prebuilt_godot_editor_windows.zip godot/bin/
+          7z a -tzip editor_windows_x64_v8.zip godot/bin/
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: prebuilt_godot_editor_windows
-          path: prebuilt_godot_editor_windows.zip
-          
-  prebuilt_godot_editor_linux:
+          name: editor_windows_x64_v8
+          path: editor_windows_x64_v8.zip
+
+  editor_windows_x64_qjs:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - name: Deps
+        run: |
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        run: |
+          cd godot
+          scons dev_build=yes p=windows use_quickjs=yes
+
+      - name: Prepare artifact
+        run: |          
+          7z a -tzip editor_windows_x64_qjs.zip godot/bin/
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: editor_windows_x64_qjs
+          path: editor_windows_x64_qjs.zip
+
+  editor_windows_x64_qjs_ng:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - name: Deps
+        run: |
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        run: |
+          cd godot
+          scons dev_build=yes p=windows use_quickjs_ng=yes
+
+      - name: Prepare artifact
+        run: |          
+          7z a -tzip editor_windows_x64_qjs_ng.zip godot/bin/
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: editor_windows_x64_qjs_ng
+          path: editor_windows_x64_qjs_ng.zip
+        
+        
+  editor_linux_x64_v8:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
@@ -120,15 +221,121 @@ jobs:
         run: |
           strip godot/bin/godot.*
           chmod +x godot/bin/godot.*
-          7z a -tzip prebuilt_godot_editor_linux.zip godot/bin/
+          7z a -tzip editor_linux_x64_v8.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: prebuilt_godot_editor_linux
-          path: prebuilt_godot_editor_linux.zip
+          name: editor_linux_x64_v8
+          path: editor_linux_x64_v8.zip
 
-  prebuilt_godot_editor_macos:
+  editor_linux_x64_qjs:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev
+
+      - name: Build Deps
+        run: |
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+
+      # Runs a set of commands using the runners shell
+      - name: Build for x64
+        run: |
+          cd godot
+          scons dev_build=yes p=linuxbsd use_quickjs=yes
+  
+      - name: Prepare artifact
+        run: |
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
+          7z a -tzip editor_linux_x64_qjs.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: editor_linux_x64_qjs
+          path: editor_linux_x64_qjs.zip
+
+  editor_linux_x64_qjs_ng:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev
+
+      - name: Build Deps
+        run: |
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+
+      # Runs a set of commands using the runners shell
+      - name: Build for x64
+        run: |
+          cd godot
+          scons dev_build=yes p=linuxbsd use_quickjs_ng=yes
+  
+      - name: Prepare artifact
+        run: |
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
+          7z a -tzip editor_linux_x64_qjs_ng.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: editor_linux_x64_qjs_ng
+          path: editor_linux_x64_qjs_ng.zip
+        
+  editor_macos_arm64_v8:
     # The type of runner that the job will run on
     runs-on: macos-14
 
@@ -171,31 +378,191 @@ jobs:
         run: |
           strip godot/bin/godot.*
           chmod +x godot/bin/godot.*
-          7z a -tzip prebuilt_godot_editor_macos.zip godot/bin/
+          7z a -tzip editor_macos_arm64_v8.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: prebuilt_godot_editor_macos
-          path: prebuilt_godot_editor_macos.zip
+          name: editor_macos_arm64_v8
+          path: editor_macos_arm64_v8.zip
+
+  editor_macos_arm64_qjs:
+    # The type of runner that the job will run on
+    runs-on: macos-14
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      - name: Build Deps
+        run: |
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+
+      # Runs a set of commands using the runners shell
+      - name: Build for arm64
+        run: |
+          cd godot
+          scons dev_build=yes p=macos arch=arm64 use_quickjs=yes
+  
+      - name: Prepare artifact
+        run: |
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
+          7z a -tzip editor_macos_arm64_qjs.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: editor_macos_arm64_qjs
+          path: editor_macos_arm64_qjs.zip
+
+  editor_macos_arm64_qjs_ng:
+    # The type of runner that the job will run on
+    runs-on: macos-14
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      - name: Build Deps
+        run: |
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+
+      # Runs a set of commands using the runners shell
+      - name: Build for arm64
+        run: |
+          cd godot
+          scons dev_build=yes p=macos arch=arm64 use_quickjs_ng=yes
+  
+      - name: Prepare artifact
+        run: |
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
+          7z a -tzip editor_macos_arm64_qjs_ng.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: editor_macos_arm64_qjs_ng
+          path: editor_macos_arm64_qjs_ng.zip
         
+  editor_macos_arm64_jsc:
+    # The type of runner that the job will run on
+    runs-on: macos-14
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      - name: Build Deps
+        run: |
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+
+      # Runs a set of commands using the runners shell
+      - name: Build for arm64
+        run: |
+          cd godot
+          scons dev_build=yes p=macos arch=arm64 use_jsc=yes
+  
+      - name: Prepare artifact
+        run: |
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
+          7z a -tzip editor_macos_arm64_jsc.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: editor_macos_arm64_jsc
+          path: editor_macos_arm64_jsc.zip
+
   publish:
     runs-on: ubuntu-latest
     needs: 
-      - prebuilt_godot_editor_windows
-      - prebuilt_godot_editor_linux
-      - prebuilt_godot_editor_macos
+      - editor_windows_x64_v8
+      - editor_windows_x64_qjs
+      - editor_windows_x64_qjs_ng
+      - editor_linux_x64_v8
+      - editor_linux_x64_qjs
+      - editor_linux_x64_qjs_ng
+      - editor_macos_arm64_v8
+      - editor_macos_arm64_qjs
+      - editor_macos_arm64_qjs_ng
+      - editor_macos_arm64_jsc
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: prebuilt_godot_editor_*
+          pattern: editor_*
           path: godot_editor/
           merge-multiple: true
 
       - name: release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: Godot${{ github.event.inputs.godot_branch }}_GodotJS${{ github.event.inputs.godotjs_tag }}
-          name: Godot${{ github.event.inputs.godot_branch }}_GodotJS${{ github.event.inputs.godotjs_tag }}
+          tag_name: Godot${{ github.event.inputs.godot_branch }}_GodotJS${{ github.event.inputs.godotjs_tag }}_bundle
+          name: Godot${{ github.event.inputs.godot_branch }}_GodotJS${{ github.event.inputs.godotjs_tag }}_bundle
           files: |
             godot_editor/*
