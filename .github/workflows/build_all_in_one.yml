@@ -1,0 +1,200 @@
+name: release
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      godotjs_tag:
+        description: 'GodotJS version tag'
+        type: string
+        required: true
+
+      godot_branch:
+        description: 'godot branch'
+        type: string
+        required: true
+        default: "4.3"
+
+      deps_package_tag:
+        description: 'deps package tag'
+        type: string
+        required: true
+        default: "v8_12.4.254.21_r13"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  prebuilt_godot_editor_windows:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - name: Deps
+        run: |
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        run: |
+          cd godot
+          scons dev_build=yes p=windows
+
+      - name: Prepare artifact
+        run: |          
+          7z a -tzip prebuilt_godot_editor_windows.zip godot/bin/
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_godot_editor_windows
+          path: prebuilt_godot_editor_windows.zip
+          
+  prebuilt_godot_editor_linux:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev
+
+      - name: Build Deps
+        run: |
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+
+      # Runs a set of commands using the runners shell
+      - name: Build for x64
+        run: |
+          cd godot
+          scons dev_build=yes p=linuxbsd 
+  
+      - name: Prepare artifact
+        run: |
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
+          7z a -tzip prebuilt_godot_editor_linux.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_godot_editor_linux
+          path: prebuilt_godot_editor_linux.zip
+
+  prebuilt_godot_editor_macos:
+    # The type of runner that the job will run on
+    runs-on: macos-14
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          lfs: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      - name: Build Deps
+        run: |
+          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+
+      # Runs a set of commands using the runners shell
+      - name: Build for arm64
+        run: |
+          cd godot
+          scons dev_build=yes p=macos arch=arm64
+  
+      - name: Prepare artifact
+        run: |
+          strip godot/bin/godot.*
+          chmod +x godot/bin/godot.*
+          7z a -tzip prebuilt_godot_editor_macos.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_godot_editor_macos
+          path: prebuilt_godot_editor_macos.zip
+        
+  publish:
+    runs-on: ubuntu-latest
+    needs: 
+      - prebuilt_godot_editor_windows
+      - prebuilt_godot_editor_linux
+      - prebuilt_godot_editor_macos
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: prebuilt_godot_editor_*
+          path: godot_editor/
+          merge-multiple: true
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Godot${{ github.event.inputs.godot_branch }}_GodotJS${{ github.event.inputs.godotjs_tag }}
+          files: |
+            godot_editor/*
