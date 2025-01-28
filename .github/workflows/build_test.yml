@@ -1,4 +1,4 @@
-name: release
+name: Test
 
 # Controls when the workflow will run
 on:
@@ -38,36 +38,9 @@ jobs:
           path: godot
           ref: ${{ github.event.inputs.godot_branch }}
 
-      - uses: actions/checkout@v4
-        with:
-          repository: ialex32x/GodotJS
-          path: godot/modules/GodotJS
-          lfs: true
-
-      - name: Deps
-        run: |
-          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
-          dir v8.zip
-          7z x -ogodot/modules/GodotJS v8.zip
-          dir godot/modules/GodotJS/v8
-  
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      # Runs a single command using the runners shell
-      - name: Prerequisites
-        run: pip install scons
-
-      # Runs a set of commands using the runners shell
-      - name: Build Godot
-        run: |
-          cd godot
-          scons dev_build=yes p=windows
-
       - name: Prepare artifact
         run: |          
-          7z a -tzip prebuilt_godot_editor_windows.zip godot/bin/
+          7z a -tzip prebuilt_godot_editor_windows.zip godot/core/
 
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -88,39 +61,9 @@ jobs:
           path: godot
           ref: ${{ github.event.inputs.godot_branch }}
 
-      - uses: actions/checkout@v4
-        with:
-          repository: ialex32x/GodotJS
-          path: godot/modules/GodotJS
-          lfs: true
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      # Runs a single command using the runners shell
-      - name: Prerequisites
-        run: |
-          pip install scons
-          sudo apt-get update
-          sudo apt-get install -y build-essential pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev
-
-      - name: Build Deps
-        run: |
-          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
-          7z x -ogodot/modules/GodotJS v8.zip
-
-      # Runs a set of commands using the runners shell
-      - name: Build for x64
-        run: |
-          cd godot
-          scons dev_build=yes p=linuxbsd 
-  
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
-          7z a -tzip prebuilt_godot_editor_linux.zip godot/bin/
+          7z a -tzip prebuilt_godot_editor_linux.zip godot/core/
   
       - name: Upload
         uses: actions/upload-artifact@v4
@@ -141,37 +84,11 @@ jobs:
           path: godot
           ref: ${{ github.event.inputs.godot_branch }}
 
-      - uses: actions/checkout@v4
-        with:
-          repository: ialex32x/GodotJS
-          path: godot/modules/GodotJS
-          lfs: true
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      # Runs a single command using the runners shell
-      - name: Prerequisites
-        run: pip install scons
-
-      - name: Build Deps
-        run: |
-          curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
-          7z x -ogodot/modules/GodotJS v8.zip
-          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
-
-      # Runs a set of commands using the runners shell
-      - name: Build for arm64
-        run: |
-          cd godot
-          scons dev_build=yes p=macos arch=arm64
-  
       - name: Prepare artifact
         run: |
           strip godot/bin/godot.*
           chmod +x godot/bin/godot.*
-          7z a -tzip prebuilt_godot_editor_macos.zip godot/bin/
+          7z a -tzip prebuilt_godot_editor_macos.zip godot/core/
   
       - name: Upload
         uses: actions/upload-artifact@v4
