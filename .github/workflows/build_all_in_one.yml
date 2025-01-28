@@ -43,6 +43,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - name: Deps
         run: |
@@ -93,6 +94,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - name: Deps
         run: |
@@ -143,6 +145,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - name: Deps
         run: |
@@ -194,6 +197,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -247,6 +251,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -300,6 +305,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -353,6 +359,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -404,6 +411,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -455,6 +463,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -491,6 +500,7 @@ jobs:
   editor_macos_arm64_jsc:
     # The type of runner that the job will run on
     runs-on: macos-14
+    if: false
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -506,6 +516,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -551,7 +562,6 @@ jobs:
       - editor_macos_arm64_v8
       - editor_macos_arm64_qjs
       - editor_macos_arm64_qjs_ng
-      - editor_macos_arm64_jsc
     steps:
       - uses: actions/download-artifact@v4
         with:
