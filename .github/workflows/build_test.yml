@@ -86,8 +86,6 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
           7z a -tzip prebuilt_godot_editor_macos.zip godot/core/
   
       - name: Upload
