@@ -1,4 +1,4 @@
-name: test macos jsc
+name: test ios jsc
 
 # Controls when the workflow will run
 on:
