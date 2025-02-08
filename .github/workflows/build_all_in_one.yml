@@ -8,7 +8,7 @@ on:
       bundle_ver_tag:
         description: 'bundle version tag (disable publish if empty)'
         type: string
-        required: true
+        required: false
         default: ""
 
       godotjs_ref:
