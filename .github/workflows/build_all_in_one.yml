@@ -375,6 +375,10 @@ jobs:
           lfs: true
           submodules: recursive
 
+      - uses: actions/checkout@v4
+        with:
+          path: Scripts
+  
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -387,7 +391,9 @@ jobs:
         run: |
           curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
-          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          # sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          chmod +x $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
+          $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
 
       # Runs a set of commands using the runners shell
       - name: Build for arm64
@@ -428,6 +434,10 @@ jobs:
           lfs: true
           submodules: recursive
 
+      - uses: actions/checkout@v4
+        with:
+          path: Scripts
+  
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -440,7 +450,9 @@ jobs:
         run: |
           curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
-          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          # sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          chmod +x $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
+          $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
 
       # Runs a set of commands using the runners shell
       - name: Build for arm64
@@ -481,6 +493,10 @@ jobs:
           lfs: true
           submodules: recursive
 
+      - uses: actions/checkout@v4
+        with:
+          path: Scripts
+  
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -493,7 +509,9 @@ jobs:
         run: |
           curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
-          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          # sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          chmod +x $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
+          $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
 
       # Runs a set of commands using the runners shell
       - name: Build for arm64
@@ -547,7 +565,9 @@ jobs:
         run: |
           curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
           7z x -ogodot/modules/GodotJS v8.zip
-          sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          # sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          chmod +x $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
+          $GITHUB_WORKSPACE/Scripts/install_vulkan_sdk_macos.sh
 
       # Runs a set of commands using the runners shell
       - name: Build for arm64
