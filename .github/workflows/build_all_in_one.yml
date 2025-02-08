@@ -5,13 +5,20 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      godotjs_tag:
-        description: 'GodotJS version tag'
+      bundle_ver_tag:
+        description: 'bundle version tag (disable publish if empty)'
         type: string
         required: true
+        default: ""
 
-      godot_branch:
-        description: 'godot branch'
+      godotjs_ref:
+        description: 'GodotJS ref (branch/tag/SHA)'
+        type: string
+        required: true
+        default: "main"
+  
+      godot_ref:
+        description: 'Godot Engine ref (branch/tag/SHA)'
         type: string
         required: true
         default: "4.3"
@@ -36,12 +43,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -87,12 +95,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -138,12 +147,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -190,12 +200,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -244,12 +255,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -298,12 +310,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -352,12 +365,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -404,12 +418,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -456,12 +471,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -509,12 +525,13 @@ jobs:
         with: 
           repository: godotengine/godot
           path: godot
-          ref: ${{ github.event.inputs.godot_branch }}
+          ref: ${{ github.event.inputs.godot_ref }}
 
       - uses: actions/checkout@v4
         with:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
           lfs: true
           submodules: recursive
 
@@ -551,6 +568,8 @@ jobs:
           path: editor_macos_arm64_jsc.zip
 
   publish:
+    if: github.event.inputs.bundle_ver_tag != ''
+
     runs-on: ubuntu-latest
     needs: 
       - editor_windows_x64_v8
@@ -562,6 +581,7 @@ jobs:
       - editor_macos_arm64_v8
       - editor_macos_arm64_qjs
       - editor_macos_arm64_qjs_ng
+
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -572,7 +592,7 @@ jobs:
       - name: release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: Godot${{ github.event.inputs.godot_branch }}_GodotJS${{ github.event.inputs.godotjs_tag }}_bundle
-          name: Godot${{ github.event.inputs.godot_branch }}_GodotJS${{ github.event.inputs.godotjs_tag }}_bundle
+          tag_name: GodotJS_${{ github.event.inputs.godotjs_ref }}_Godot_${{ github.event.inputs.godot_ref }}_bundle_${{ github.event.inputs.bundle_ver_tag }}
+          name: GodotJS_${{ github.event.inputs.godotjs_ref }}_Godot_${{ github.event.inputs.godot_ref }}_bundle_${{ github.event.inputs.bundle_ver_tag }}
           files: |
             godot_editor/*
