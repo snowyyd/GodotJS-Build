@@ -249,8 +249,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
+          strip godot/bin/bin/godot.linuxbsd.*.x86_64
+          chmod +x godot/bin/bin/godot.linuxbsd.*.x86_64
           7z a -tzip editor_linux_x64_v8.zip godot/bin/
   
       - name: Upload
@@ -306,8 +306,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
+          strip godot/bin/bin/godot.linuxbsd.*.x86_64
+          chmod +x godot/bin/bin/godot.linuxbsd.*.x86_64
           7z a -tzip editor_linux_x64_qjs.zip godot/bin/
   
       - name: Upload
@@ -363,8 +363,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
+          strip godot/bin/bin/godot.linuxbsd.*.x86_64
+          chmod +x godot/bin/bin/godot.linuxbsd.*.x86_64
           7z a -tzip editor_linux_x64_qjs_ng.zip godot/bin/
   
       - name: Upload
@@ -424,8 +424,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
+          strip godot/bin/bin/godot.macos.*.arm64
+          chmod +x godot/bin/bin/godot.macos.*.arm64
           7z a -tzip editor_macos_arm64_v8.zip godot/bin/
   
       - name: Upload
@@ -485,8 +485,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
+          strip godot/bin/bin/godot.macos.*.arm64
+          chmod +x godot/bin/bin/godot.macos.*.arm64
           7z a -tzip editor_macos_arm64_qjs.zip godot/bin/
   
       - name: Upload
@@ -546,8 +546,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
+          strip godot/bin/bin/godot.macos.*.arm64
+          chmod +x godot/bin/bin/godot.macos.*.arm64
           7z a -tzip editor_macos_arm64_qjs_ng.zip godot/bin/
   
       - name: Upload
@@ -604,8 +604,8 @@ jobs:
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.*
-          chmod +x godot/bin/godot.*
+          strip godot/bin/bin/godot.macos.*.arm64
+          chmod +x godot/bin/bin/godot.macos.*.arm64
           7z a -tzip editor_macos_arm64_jsc.zip godot/bin/
   
       - name: Upload
