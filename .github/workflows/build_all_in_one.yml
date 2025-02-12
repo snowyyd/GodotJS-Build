@@ -29,6 +29,12 @@ on:
         required: true
         default: "v8_12.4.254.21_r13"
 
+      additional_scons_args:
+        description: 'additional scons args'
+        type: string
+        required: false
+        default: ""
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -72,7 +78,9 @@ jobs:
       - name: Build Godot
         run: |
           cd godot
-          scons dev_build=yes p=windows
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=windows 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=windows 
 
       - name: Prepare artifact
         run: |          
@@ -124,7 +132,9 @@ jobs:
       - name: Build Godot
         run: |
           cd godot
-          scons dev_build=yes p=windows use_quickjs=yes
+          scons ${{ github.event.inputs.additional_scons_args }} use_quickjs=yes dev_build=yes p=windows 
+          scons ${{ github.event.inputs.additional_scons_args }} use_quickjs=yes target=template_debug 
+          scons ${{ github.event.inputs.additional_scons_args }} use_quickjs=yes target=template_release separate_debug_symbols=yes debug_symbols=yes p=windows 
 
       - name: Prepare artifact
         run: |          
@@ -176,7 +186,10 @@ jobs:
       - name: Build Godot
         run: |
           cd godot
-          scons dev_build=yes p=windows use_quickjs_ng=yes
+
+          scons ${{ github.event.inputs.additional_scons_args }} use_quickjs_ng=yes dev_build=yes p=windows 
+          scons ${{ github.event.inputs.additional_scons_args }} use_quickjs_ng=yes target=template_debug 
+          scons ${{ github.event.inputs.additional_scons_args }} use_quickjs_ng=yes target=template_release separate_debug_symbols=yes debug_symbols=yes p=windows 
 
       - name: Prepare artifact
         run: |          
@@ -230,7 +243,9 @@ jobs:
       - name: Build for x64
         run: |
           cd godot
-          scons dev_build=yes p=linuxbsd 
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd   
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd   
   
       - name: Prepare artifact
         run: |
@@ -285,7 +300,9 @@ jobs:
       - name: Build for x64
         run: |
           cd godot
-          scons dev_build=yes p=linuxbsd use_quickjs=yes
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd use_quickjs=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd use_quickjs=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd use_quickjs=yes 
   
       - name: Prepare artifact
         run: |
@@ -340,7 +357,9 @@ jobs:
       - name: Build for x64
         run: |
           cd godot
-          scons dev_build=yes p=linuxbsd use_quickjs_ng=yes
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd use_quickjs_ng=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd use_quickjs_ng=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd use_quickjs_ng=yes 
   
       - name: Prepare artifact
         run: |
@@ -399,7 +418,9 @@ jobs:
       - name: Build for arm64
         run: |
           cd godot
-          scons dev_build=yes p=macos arch=arm64
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=macos arch=arm64 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=macos arch=arm64 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=macos arch=arm64 
   
       - name: Prepare artifact
         run: |
@@ -458,7 +479,9 @@ jobs:
       - name: Build for arm64
         run: |
           cd godot
-          scons dev_build=yes p=macos arch=arm64 use_quickjs=yes
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=macos arch=arm64 use_quickjs=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=macos arch=arm64 use_quickjs=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=macos arch=arm64 use_quickjs=yes 
   
       - name: Prepare artifact
         run: |
@@ -517,7 +540,9 @@ jobs:
       - name: Build for arm64
         run: |
           cd godot
-          scons dev_build=yes p=macos arch=arm64 use_quickjs_ng=yes
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=macos arch=arm64 use_quickjs_ng=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=macos arch=arm64 use_quickjs_ng=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=macos arch=arm64 use_quickjs_ng=yes 
   
       - name: Prepare artifact
         run: |
@@ -573,7 +598,9 @@ jobs:
       - name: Build for arm64
         run: |
           cd godot
-          scons dev_build=yes p=macos arch=arm64 use_jsc=yes
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=macos arch=arm64 use_jsc=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=macos arch=arm64 use_jsc=yes 
+          scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=macos arch=arm64 use_jsc=yes 
   
       - name: Prepare artifact
         run: |
