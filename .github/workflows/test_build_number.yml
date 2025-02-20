@@ -8,7 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    outputs:
+      build_number: ${{ steps.get_runs.outputs.build_number }} 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -18,8 +19,13 @@ jobs:
         run: |
           RUNS_URL="https://api.github.com/repos/${{ github.repository }}/actions/workflows/${{ github.workflow }}/runs"
           TOTAL_RUNS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $RUNS_URL | jq '.total_count')
-          echo "BUILD_NUMBER=$TOTAL_RUNS" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=$TOTAL_RUNS" | gh secret set BUILD_NUMBER --body -
+          echo "::set-output name=build_number::$TOTAL_RUNS"
 
+  print:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Print Build Number
         run: |
-          echo "Current Build Number: ${{ env.BUILD_NUMBER }}"
+          echo "Current Build Number:  ${{ needs.build.outputs.build_number }}"
