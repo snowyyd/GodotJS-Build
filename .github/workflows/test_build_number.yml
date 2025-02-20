@@ -21,4 +21,5 @@ jobs:
           echo "BUILD_NUMBER=$TOTAL_RUNS" >> $GITHUB_ENV
 
       - name: Print Build Number
-        run: echo "Current Build Number: ${{ env.BUILD_NUMBER }}"
+        run: |
+          echo "Current Build Number: ${{ env.BUILD_NUMBER }}"
