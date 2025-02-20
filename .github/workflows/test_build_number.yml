@@ -1,0 +1,24 @@
+name: Auto Increment Build Number with API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get Workflow Runs
+        id: get_runs
+        run: |
+          RUNS_URL="https://api.github.com/repos/${{ github.repository }}/actions/workflows/${{ github.workflow }}/runs"
+          TOTAL_RUNS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $RUNS_URL | jq '.total_count')
+          echo "BUILD_NUMBER=$TOTAL_RUNS" >> $GITHUB_ENV
+
+      - name: Print Build Number
+        run: echo "Current Build Number: ${{ env.BUILD_NUMBER }}"
