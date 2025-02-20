@@ -16,9 +16,11 @@ jobs:
 
       - name: Get Workflow Runs
         id: get_runs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RUNS_URL="https://api.github.com/repos/${{ github.repository }}/actions/workflows/test_build_number.yml/runs"
-          TOTAL_RUNS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $RUNS_URL | jq '.total_count')
+          TOTAL_RUNS=$(curl -s -H "Authorization: token $GITHUB_TOKEN" $RUNS_URL | jq '.total_count')
           echo "BUILD_NUMBER=$TOTAL_RUNS" | gh secret set BUILD_NUMBER --body -
           echo "::set-output name=build_number::$TOTAL_RUNS"
 
