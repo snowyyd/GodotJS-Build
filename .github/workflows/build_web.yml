@@ -51,11 +51,12 @@ jobs:
       - name: Build Godot
         run: |
           SET EMSDK_PATH=$GITHUB_WORKSPACE\emsdk
-          CALL %EMSDK_PATH%\emsdk.bat update
           SET EMSDK_VERSION=3.1.64
-          CALL %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
-          CALL %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
-          CALL %EMSDK_PATH%\emsdk_env.bat
+
+          %EMSDK_PATH%\emsdk.bat update
+          %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
+          %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
+          %EMSDK_PATH%\emsdk_env.bat
 
           cd godot
           scons dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes
