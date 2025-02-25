@@ -49,14 +49,15 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Build Godot
+        shell: cmd
         run: |
-          $env:EMSDK_PATH = "${{ github.workspace }}\emsdk"
-          $env:EMSDK_VERSION = 3.1.64
+          SET EMSDK_PATH=%GITHUB_WORKSPACE%\emsdk
+          SET EMSDK_VERSION=3.1.64
 
-          $($env:EMSDK_PATH)\emsdk.bat update
-          $($env:EMSDK_PATH)\emsdk.bat install %EMSDK_VERSION%
-          $($env:EMSDK_PATH)\emsdk.bat activate %EMSDK_VERSION%
-          $($env:EMSDK_PATH)\emsdk_env.bat
+          CALL %EMSDK_PATH%\emsdk.bat update
+          CALL %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk_env.bat
 
           cd godot
           scons dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes
