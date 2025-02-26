@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: (test) web
+name: (test) android
 
 # Controls when the workflow will run
 on:
@@ -14,7 +14,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  prebuilt_godot_editor_web:
+  prebuilt_android:
     # The type of runner that the job will run on
     runs-on: windows-2019
 
@@ -32,11 +32,7 @@ jobs:
           repository: ialex32x/GodotJS
           path: godot/modules/GodotJS
           lfs: true
-
-      - uses: actions/checkout@v4
-        with:
-          repository: emscripten-core/emsdk
-          path: emsdk
+          submodules: recursive
 
       - uses: actions/setup-python@v5
         with:
@@ -51,20 +47,21 @@ jobs:
       - name: Build Godot
         shell: cmd
         run: |
-          SET EMSDK_PATH=%GITHUB_WORKSPACE%\emsdk
-          SET EMSDK_VERSION=3.1.64
-
-          CALL %EMSDK_PATH%\emsdk.bat update
-          CALL %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
-          CALL %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
-          CALL %EMSDK_PATH%\emsdk_env.bat
+          echo %JAVA_HOME_17_X64%
+          
+          SET JAVA_HOME=%JAVA_HOME_17_X64%
+          SET ANDROID_API_LEVEL=24
 
           cd godot
-          scons dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes
-          scons dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no
+
+          scons p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
+
+          scons p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: prebuilt_godot_editor_web
+          name: prebuilt_android
           path: godot/bin/*.*
