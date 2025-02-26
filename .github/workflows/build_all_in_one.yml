@@ -38,7 +38,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  editor_windows_x64_v8:
+  prebuilt_windows_x64_v8:
     # The type of runner that the job will run on
     runs-on: windows-2019
 
@@ -84,15 +84,15 @@ jobs:
 
       - name: Prepare artifact
         run: |          
-          7z a -tzip editor_windows_x64_v8.zip godot/bin/
+          7z a -tzip prebuilt_windows_x64_v8.zip godot/bin/
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_windows_x64_v8
-          path: editor_windows_x64_v8.zip
+          name: prebuilt_windows_x64_v8
+          path: prebuilt_windows_x64_v8.zip
 
-  editor_windows_x64_qjs:
+  prebuilt_windows_x64_qjs:
     # The type of runner that the job will run on
     runs-on: windows-2019
 
@@ -138,15 +138,15 @@ jobs:
 
       - name: Prepare artifact
         run: |          
-          7z a -tzip editor_windows_x64_qjs.zip godot/bin/
+          7z a -tzip prebuilt_windows_x64_qjs.zip godot/bin/
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_windows_x64_qjs
-          path: editor_windows_x64_qjs.zip
+          name: prebuilt_windows_x64_qjs
+          path: prebuilt_windows_x64_qjs.zip
 
-  editor_windows_x64_qjs_ng:
+  prebuilt_windows_x64_qjs_ng:
     # The type of runner that the job will run on
     runs-on: windows-2019
 
@@ -193,16 +193,16 @@ jobs:
 
       - name: Prepare artifact
         run: |          
-          7z a -tzip editor_windows_x64_qjs_ng.zip godot/bin/
+          7z a -tzip prebuilt_windows_x64_qjs_ng.zip godot/bin/
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_windows_x64_qjs_ng
-          path: editor_windows_x64_qjs_ng.zip
+          name: prebuilt_windows_x64_qjs_ng
+          path: prebuilt_windows_x64_qjs_ng.zip
         
         
-  editor_linux_x64_v8:
+  prebuilt_linux_x64_v8:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
@@ -251,15 +251,15 @@ jobs:
         run: |
           strip godot/bin/godot.linuxbsd.*.x86_64
           chmod +x godot/bin/godot.linuxbsd.*.x86_64
-          7z a -tzip editor_linux_x64_v8.zip godot/bin/
+          7z a -tzip prebuilt_linux_x64_v8.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_linux_x64_v8
-          path: editor_linux_x64_v8.zip
+          name: prebuilt_linux_x64_v8
+          path: prebuilt_linux_x64_v8.zip
 
-  editor_linux_x64_qjs:
+  prebuilt_linux_x64_qjs:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
@@ -308,15 +308,15 @@ jobs:
         run: |
           strip godot/bin/godot.linuxbsd.*.x86_64
           chmod +x godot/bin/godot.linuxbsd.*.x86_64
-          7z a -tzip editor_linux_x64_qjs.zip godot/bin/
+          7z a -tzip prebuilt_linux_x64_qjs.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_linux_x64_qjs
-          path: editor_linux_x64_qjs.zip
+          name: prebuilt_linux_x64_qjs
+          path: prebuilt_linux_x64_qjs.zip
 
-  editor_linux_x64_qjs_ng:
+  prebuilt_linux_x64_qjs_ng:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
@@ -365,15 +365,15 @@ jobs:
         run: |
           strip godot/bin/godot.linuxbsd.*.x86_64
           chmod +x godot/bin/godot.linuxbsd.*.x86_64
-          7z a -tzip editor_linux_x64_qjs_ng.zip godot/bin/
+          7z a -tzip prebuilt_linux_x64_qjs_ng.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_linux_x64_qjs_ng
-          path: editor_linux_x64_qjs_ng.zip
+          name: prebuilt_linux_x64_qjs_ng
+          path: prebuilt_linux_x64_qjs_ng.zip
         
-  editor_macos_arm64_v8:
+  prebuilt_macos_arm64_v8:
     # The type of runner that the job will run on
     runs-on: macos-14
 
@@ -426,15 +426,15 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip editor_macos_arm64_v8.zip godot/bin/
+          7z a -tzip prebuilt_macos_arm64_v8.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_macos_arm64_v8
-          path: editor_macos_arm64_v8.zip
+          name: prebuilt_macos_arm64_v8
+          path: prebuilt_macos_arm64_v8.zip
 
-  editor_macos_arm64_qjs:
+  prebuilt_macos_arm64_qjs:
     # The type of runner that the job will run on
     runs-on: macos-14
 
@@ -487,15 +487,15 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip editor_macos_arm64_qjs.zip godot/bin/
+          7z a -tzip prebuilt_macos_arm64_qjs.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_macos_arm64_qjs
-          path: editor_macos_arm64_qjs.zip
+          name: prebuilt_macos_arm64_qjs
+          path: prebuilt_macos_arm64_qjs.zip
 
-  editor_macos_arm64_qjs_ng:
+  prebuilt_macos_arm64_qjs_ng:
     # The type of runner that the job will run on
     runs-on: macos-14
 
@@ -548,15 +548,15 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip editor_macos_arm64_qjs_ng.zip godot/bin/
+          7z a -tzip prebuilt_macos_arm64_qjs_ng.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_macos_arm64_qjs_ng
-          path: editor_macos_arm64_qjs_ng.zip
+          name: prebuilt_macos_arm64_qjs_ng
+          path: prebuilt_macos_arm64_qjs_ng.zip
         
-  editor_macos_arm64_jsc:
+  prebuilt_macos_arm64_jsc:
     # The type of runner that the job will run on
     runs-on: macos-15
     if: false
@@ -606,34 +606,222 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip editor_macos_arm64_jsc.zip godot/bin/
+          7z a -tzip prebuilt_macos_arm64_jsc.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
-          name: editor_macos_arm64_jsc
-          path: editor_macos_arm64_jsc.zip
+          name: prebuilt_macos_arm64_jsc
+          path: prebuilt_macos_arm64_jsc.zip
+
+  # This workflow contains a single job called "build"
+  prebuilt_web:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_ref }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
+          lfs: true
+          submodules: recursive
+
+      - uses: actions/checkout@v4
+        with:
+          repository: emscripten-core/emsdk
+          path: emsdk
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        shell: cmd
+        run: |
+          SET EMSDK_PATH=%GITHUB_WORKSPACE%\emsdk
+          SET EMSDK_VERSION=3.1.64
+
+          CALL %EMSDK_PATH%\emsdk.bat update
+          CALL %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk_env.bat
+
+          cd godot
+          scons dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes ${{ github.event.inputs.additional_scons_args }}
+          scons dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no ${{ github.event.inputs.additional_scons_args }}
+
+      - name: Prepare artifact
+        run: |          
+          7z a -tzip prebuilt_web.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_web
+          path: prebuilt_web.zip
+
+  # This workflow contains a single job called "build"
+  prebuilt_web_qjs:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_ref }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
+          lfs: true
+          submodules: recursive
+
+      - uses: actions/checkout@v4
+        with:
+          repository: emscripten-core/emsdk
+          path: emsdk
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        shell: cmd
+        run: |
+          SET EMSDK_PATH=%GITHUB_WORKSPACE%\emsdk
+          SET EMSDK_VERSION=3.1.64
+
+          CALL %EMSDK_PATH%\emsdk.bat update
+          CALL %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk_env.bat
+
+          cd godot
+          scons use_quickjs=yes dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes ${{ github.event.inputs.additional_scons_args }}
+          scons use_quickjs=yes dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no ${{ github.event.inputs.additional_scons_args }}
+
+      - name: Prepare artifact
+        run: |          
+          7z a -tzip prebuilt_web_qjs.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_web_qjs
+          path: prebuilt_web_qjs.zip
+
+  # This workflow contains a single job called "build"
+  prebuilt_web_qjs_ng:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_ref }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
+          lfs: true
+          submodules: recursive
+
+      - uses: actions/checkout@v4
+        with:
+          repository: emscripten-core/emsdk
+          path: emsdk
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        shell: cmd
+        run: |
+          SET EMSDK_PATH=%GITHUB_WORKSPACE%\emsdk
+          SET EMSDK_VERSION=3.1.64
+
+          CALL %EMSDK_PATH%\emsdk.bat update
+          CALL %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
+          CALL %EMSDK_PATH%\emsdk_env.bat
+
+          cd godot
+          scons use_quickjs_ng=yes dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes ${{ github.event.inputs.additional_scons_args }}
+          scons use_quickjs_ng=yes dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no ${{ github.event.inputs.additional_scons_args }}
+
+      - name: Prepare artifact
+        run: |          
+          7z a -tzip prebuilt_web_qjs_ng.zip godot/bin/
+  
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_web_qjs_ng
+          path: prebuilt_web_qjs_ng.zip
 
   publish:
     if: github.event.inputs.bundle_ver_tag != ''
 
     runs-on: ubuntu-latest
     needs: 
-      - editor_windows_x64_v8
-      - editor_windows_x64_qjs
-      - editor_windows_x64_qjs_ng
-      - editor_linux_x64_v8
-      - editor_linux_x64_qjs
-      - editor_linux_x64_qjs_ng
-      - editor_macos_arm64_v8
-      - editor_macos_arm64_qjs
-      - editor_macos_arm64_qjs_ng
+      - prebuilt_windows_x64_v8
+      - prebuilt_windows_x64_qjs
+      - prebuilt_windows_x64_qjs_ng
+      - prebuilt_linux_x64_v8
+      - prebuilt_linux_x64_qjs
+      - prebuilt_linux_x64_qjs_ng
+      - prebuilt_macos_arm64_v8
+      - prebuilt_macos_arm64_qjs
+      - prebuilt_macos_arm64_qjs_ng
+      - prebuilt_web
+      - prebuilt_web_qjs
+      - prebuilt_web_qjs_ng
 
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: editor_*
-          path: godot_editor/
+          path: staging_area/
           merge-multiple: true
 
       - name: release
@@ -642,4 +830,4 @@ jobs:
           tag_name: GodotJS_${{ github.event.inputs.godotjs_ref }}_Godot_${{ github.event.inputs.godot_ref }}_bundle_${{ github.event.inputs.bundle_ver_tag }}
           name: GodotJS_${{ github.event.inputs.godotjs_ref }}_Godot_${{ github.event.inputs.godot_ref }}_bundle_${{ github.event.inputs.bundle_ver_tag }}
           files: |
-            godot_editor/*
+            staging_area/*
