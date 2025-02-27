@@ -82,15 +82,11 @@ jobs:
           scons ${{ github.event.inputs.additional_scons_args }} target=template_debug 
           scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=windows 
 
-      - name: Prepare artifact
-        run: |          
-          7z a -tzip prebuilt_windows_x64_v8.zip godot/bin/
-
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_windows_x64_v8
-          path: prebuilt_windows_x64_v8.zip
+          path: godot/bin/*.*
 
   prebuilt_windows_x64_qjs:
     # The type of runner that the job will run on
@@ -136,15 +132,11 @@ jobs:
           scons ${{ github.event.inputs.additional_scons_args }} use_quickjs=yes target=template_debug 
           scons ${{ github.event.inputs.additional_scons_args }} use_quickjs=yes target=template_release separate_debug_symbols=yes debug_symbols=yes p=windows 
 
-      - name: Prepare artifact
-        run: |          
-          7z a -tzip prebuilt_windows_x64_qjs.zip godot/bin/
-
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_windows_x64_qjs
-          path: prebuilt_windows_x64_qjs.zip
+          path: godot/bin/*.*
 
   prebuilt_windows_x64_qjs_ng:
     # The type of runner that the job will run on
@@ -191,15 +183,11 @@ jobs:
           scons ${{ github.event.inputs.additional_scons_args }} use_quickjs_ng=yes target=template_debug 
           scons ${{ github.event.inputs.additional_scons_args }} use_quickjs_ng=yes target=template_release separate_debug_symbols=yes debug_symbols=yes p=windows 
 
-      - name: Prepare artifact
-        run: |          
-          7z a -tzip prebuilt_windows_x64_qjs_ng.zip godot/bin/
-
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_windows_x64_qjs_ng
-          path: prebuilt_windows_x64_qjs_ng.zip
+          path: godot/bin/*.*
         
         
   prebuilt_linux_x64_v8:
@@ -251,13 +239,12 @@ jobs:
         run: |
           strip godot/bin/godot.linuxbsd.*.x86_64
           chmod +x godot/bin/godot.linuxbsd.*.x86_64
-          7z a -tzip prebuilt_linux_x64_v8.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_linux_x64_v8
-          path: prebuilt_linux_x64_v8.zip
+          path: godot/bin/*.*
 
   prebuilt_linux_x64_qjs:
     # The type of runner that the job will run on
@@ -308,13 +295,12 @@ jobs:
         run: |
           strip godot/bin/godot.linuxbsd.*.x86_64
           chmod +x godot/bin/godot.linuxbsd.*.x86_64
-          7z a -tzip prebuilt_linux_x64_qjs.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_linux_x64_qjs
-          path: prebuilt_linux_x64_qjs.zip
+          path: godot/bin/*.*
 
   prebuilt_linux_x64_qjs_ng:
     # The type of runner that the job will run on
@@ -365,13 +351,12 @@ jobs:
         run: |
           strip godot/bin/godot.linuxbsd.*.x86_64
           chmod +x godot/bin/godot.linuxbsd.*.x86_64
-          7z a -tzip prebuilt_linux_x64_qjs_ng.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_linux_x64_qjs_ng
-          path: prebuilt_linux_x64_qjs_ng.zip
+          path: godot/bin/*.*
         
   prebuilt_macos_arm64_v8:
     # The type of runner that the job will run on
@@ -426,13 +411,12 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip prebuilt_macos_arm64_v8.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_macos_arm64_v8
-          path: prebuilt_macos_arm64_v8.zip
+          path: godot/bin/*.*
 
   prebuilt_macos_arm64_qjs:
     # The type of runner that the job will run on
@@ -487,13 +471,12 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip prebuilt_macos_arm64_qjs.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_macos_arm64_qjs
-          path: prebuilt_macos_arm64_qjs.zip
+          path: godot/bin/*.*
 
   prebuilt_macos_arm64_qjs_ng:
     # The type of runner that the job will run on
@@ -548,13 +531,12 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip prebuilt_macos_arm64_qjs_ng.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_macos_arm64_qjs_ng
-          path: prebuilt_macos_arm64_qjs_ng.zip
+          path: godot/bin/*.*
         
   prebuilt_macos_arm64_jsc:
     # The type of runner that the job will run on
@@ -606,13 +588,12 @@ jobs:
         run: |
           strip godot/bin/godot.macos.*.arm64
           chmod +x godot/bin/godot.macos.*.arm64
-          7z a -tzip prebuilt_macos_arm64_jsc.zip godot/bin/
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_macos_arm64_jsc
-          path: prebuilt_macos_arm64_jsc.zip
+          path: godot/bin/*.*
 
   # This workflow contains a single job called "build"
   prebuilt_web:
@@ -666,15 +647,11 @@ jobs:
           scons dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes ${{ github.event.inputs.additional_scons_args }}
           scons dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no ${{ github.event.inputs.additional_scons_args }}
 
-      - name: Prepare artifact
-        run: |          
-          7z a -tzip prebuilt_web.zip godot/bin/
-  
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_web
-          path: prebuilt_web.zip
+          path: godot/bin/*.*
 
   # This workflow contains a single job called "build"
   prebuilt_web_qjs:
@@ -728,15 +705,11 @@ jobs:
           scons use_quickjs=yes dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes ${{ github.event.inputs.additional_scons_args }}
           scons use_quickjs=yes dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no ${{ github.event.inputs.additional_scons_args }}
 
-      - name: Prepare artifact
-        run: |          
-          7z a -tzip prebuilt_web_qjs.zip godot/bin/
-  
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_web_qjs
-          path: prebuilt_web_qjs.zip
+          path: godot/bin/*.*
 
   # This workflow contains a single job called "build"
   prebuilt_web_qjs_ng:
@@ -790,15 +763,191 @@ jobs:
           scons use_quickjs_ng=yes dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes ${{ github.event.inputs.additional_scons_args }}
           scons use_quickjs_ng=yes dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no ${{ github.event.inputs.additional_scons_args }}
 
-      - name: Prepare artifact
-        run: |          
-          7z a -tzip prebuilt_web_qjs_ng.zip godot/bin/
-  
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_web_qjs_ng
-          path: prebuilt_web_qjs_ng.zip
+          path: godot/bin/*.*
+
+  prebuilt_android_v8:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_ref }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
+          lfs: true
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deps
+        run: |
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        shell: cmd
+        run: |
+          echo %JAVA_HOME_17_X64%
+
+          SET JAVA_HOME=%JAVA_HOME_17_X64%
+          SET ANDROID_API_LEVEL=24
+
+          cd godot
+
+          scons ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
+
+          scons ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_android_v8
+          path: godot/bin/*.*
+
+  prebuilt_android_qjs:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_ref }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
+          lfs: true
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deps
+        run: |
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        shell: cmd
+        run: |
+          echo %JAVA_HOME_17_X64%
+
+          SET JAVA_HOME=%JAVA_HOME_17_X64%
+          SET ANDROID_API_LEVEL=24
+
+          cd godot
+
+          scons use_quickjs=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons use_quickjs=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
+
+          scons use_quickjs=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons use_quickjs=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_android_qjs
+          path: godot/bin/*.*
+
+  prebuilt_android_qjs_ng:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_ref }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
+          lfs: true
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deps
+        run: |
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: |
+          pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        shell: cmd
+        run: |
+          echo %JAVA_HOME_17_X64%
+
+          SET JAVA_HOME=%JAVA_HOME_17_X64%
+          SET ANDROID_API_LEVEL=24
+
+          cd godot
+
+          scons use_quickjs_ng=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons use_quickjs_ng=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
+
+          scons use_quickjs_ng=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no 
+          scons use_quickjs_ng=yes ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes 
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with: 
+          name: prebuilt_android_qjs_ng
+          path: godot/bin/*.*
 
   publish:
     if: github.event.inputs.bundle_ver_tag != ''
@@ -817,6 +966,9 @@ jobs:
       - prebuilt_web
       - prebuilt_web_qjs
       - prebuilt_web_qjs_ng
+      - prebuilt_android_v8
+      - prebuilt_android_qjs
+      - prebuilt_android_qjs_ng
 
     steps:
       - uses: actions/download-artifact@v4
