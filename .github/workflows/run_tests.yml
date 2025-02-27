@@ -1,0 +1,79 @@
+# This is a basic workflow to help you get started with Actions
+
+name: run tests
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      deps_package_tag:
+        description: 'deps package tag'
+        type: string
+        required: true
+        default: "v8_12.4.254.21_r13"
+
+      godotjs_ref:
+        description: 'GodotJS ref (branch/tag/SHA)'
+        type: string
+        required: true
+        default: "main"
+  
+      godot_ref:
+        description: 'Godot Engine ref (branch/tag/SHA)'
+        type: string
+        required: true
+        default: "4.3"
+
+      additional_scons_args:
+        description: 'additional scons args'
+        type: string
+        required: false
+        default: ""
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  prebuilt_godot_editor_windows:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with: 
+          repository: godotengine/godot
+          path: godot
+          ref: ${{ github.event.inputs.godot_ref }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: ialex32x/GodotJS
+          path: godot/modules/GodotJS
+          ref: ${{ github.event.inputs.godotjs_ref }}
+          lfs: true
+          submodules: recursive
+
+      - name: Deps
+        run: |
+          Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+          dir v8.zip
+          7z x -ogodot/modules/GodotJS v8.zip
+          dir godot/modules/GodotJS/v8
+  
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Runs a single command using the runners shell
+      - name: Prerequisites
+        run: pip install scons
+
+      # Runs a set of commands using the runners shell
+      - name: Build Godot
+        shell: cmd
+        run: |
+          cd godot
+          scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=windows tests=yes 
+          .\bin\godot.windows.editor.dev.x86_64.exe --test --test-case="[jsb]*"
