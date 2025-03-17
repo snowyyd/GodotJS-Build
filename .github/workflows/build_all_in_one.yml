@@ -5,23 +5,30 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      bundle_ver_tag:
-        description: 'bundle version tag (disable publish if empty)'
+      build_ver_tag:
+        description: 'build version tag ("a.b.c-d", disable publish if empty)'
         type: string
         required: false
         default: ""
 
       godotjs_ref:
         description: 'GodotJS ref (branch/tag/SHA)'
-        type: string
+        type: choice
+        options:
+          - "dev"
+          - "main"
         required: true
         default: "main"
   
       godot_ref:
         description: 'Godot Engine ref (branch/tag/SHA)'
-        type: string
+        type: choice
+        options:
+          - "4.3"
+          - "4.4"
+          - "master"
         required: true
-        default: "4.3"
+        default: "4.4"
 
       deps_package_tag:
         description: 'deps package tag'
@@ -31,6 +38,12 @@ on:
 
       additional_scons_args:
         description: 'additional scons args'
+        type: string
+        required: false
+        default: ""
+
+      additional_release_notes:
+        description: 'additional release notes'
         type: string
         required: false
         default: ""
@@ -980,7 +993,7 @@ jobs:
           path: godot/bin/*.*
 
   publish:
-    if: github.event.inputs.bundle_ver_tag != ''
+    if: github.event.inputs.build_ver_tag != ''
 
     runs-on: ubuntu-latest
     needs: 
@@ -1004,12 +1017,22 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: staging_area/
-          merge-multiple: true
+          merge-multiple: false
+
+      - name: re-archive
+        run: |
+          for dir in $GITHUB_WORKSPACE/staging_area/*/; do dir_name=$(basename "$dir"); cd $dir; 7z a "../${dir_name}.zip" .; done
 
       - name: release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: GodotJS_${{ github.event.inputs.godotjs_ref }}_Godot_${{ github.event.inputs.godot_ref }}_bundle_${{ github.event.inputs.bundle_ver_tag }}
-          name: GodotJS_${{ github.event.inputs.godotjs_ref }}_Godot_${{ github.event.inputs.godot_ref }}_bundle_${{ github.event.inputs.bundle_ver_tag }}
+          tag_name: GodotJS_${{ github.event.inputs.build_ver_tag }}
+          name: GodotJS_${{ github.event.inputs.build_ver_tag }}
+          body: |
+            ${{ github.event.inputs.additional_release_notes }}
+
+            - GodotJS ${{ github.event.inputs.godotjs_ref }}
+            - Godot ${{ github.event.inputs.godot_ref }}
+            - v8 ${{ github.event.inputs.deps_package_tag }}
           files: |
-            staging_area/*
+            staging_area/prebuilt_*.zip
