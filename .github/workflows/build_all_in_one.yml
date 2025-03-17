@@ -1021,7 +1021,7 @@ jobs:
 
       - name: re-archive
         run: |
-          for dir in $GITHUB_WORKSPACE/staging_area/*/; do dir_name=$(basename "$dir"); cd $dir; 7z a "../${dir_name}.zip" .; done
+          for dir in $GITHUB_WORKSPACE/staging_area/*/; do dir_name=$(basename "$dir"); cd $dir; 7z a "../${dir_name}.zip" .; rm -rf ./*; done
 
       - name: release
         uses: softprops/action-gh-release@v1
