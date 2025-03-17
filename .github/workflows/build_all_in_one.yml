@@ -230,21 +230,31 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Build for x64
         run: |
+          mkdir -p staging/bin
           cd godot
+
           scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd 
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd 
+
           scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd   
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd   
+
           scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd   
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd   
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.linuxbsd.*.x86_64
-          chmod +x godot/bin/godot.linuxbsd.*.x86_64
+          strip staging/bin/godot.linuxbsd.*.x86_64
+          chmod +x staging/bin/godot.linuxbsd.*.x86_64
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_linux_x64_v8
-          path: godot/bin/*.*
+          path: staging/bin/*.*
 
   prebuilt_linux_x64_qjs:
     # The type of runner that the job will run on
@@ -286,21 +296,31 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Build for x64
         run: |
+          mkdir -p staging/bin
           cd godot
+
           scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd use_quickjs=yes 
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd use_quickjs=yes 
+
           scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd use_quickjs=yes 
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd use_quickjs=yes 
+
           scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd use_quickjs=yes 
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd use_quickjs=yes 
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.linuxbsd.*.x86_64
-          chmod +x godot/bin/godot.linuxbsd.*.x86_64
+          strip staging/bin/godot.linuxbsd.*.x86_64
+          chmod +x staging/bin/godot.linuxbsd.*.x86_64
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_linux_x64_qjs
-          path: godot/bin/*.*
+          path: staging/bin/*.*
 
   prebuilt_linux_x64_qjs_ng:
     # The type of runner that the job will run on
@@ -342,21 +362,31 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Build for x64
         run: |
+          mkdir -p staging/bin
           cd godot
+
           scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd use_quickjs_ng=yes 
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd use_quickjs_ng=yes 
+
           scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd use_quickjs_ng=yes 
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd use_quickjs_ng=yes 
+
           scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd use_quickjs_ng=yes 
+          cp bin/* ../staging/bin/
+          scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd use_quickjs_ng=yes 
   
       - name: Prepare artifact
         run: |
-          strip godot/bin/godot.linuxbsd.*.x86_64
-          chmod +x godot/bin/godot.linuxbsd.*.x86_64
+          strip staging/bin/godot.linuxbsd.*.x86_64
+          chmod +x staging/bin/godot.linuxbsd.*.x86_64
   
       - name: Upload
         uses: actions/upload-artifact@v4
         with: 
           name: prebuilt_linux_x64_qjs_ng
-          path: godot/bin/*.*
+          path: staging/bin/*.*
         
   prebuilt_macos_arm64_v8:
     # The type of runner that the job will run on
