@@ -37,13 +37,15 @@ runs:
           echo "JS_ENGINE_ARG=use_jsc=yes" >> "${GITHUB_OUTPUT}"
         fi
 
-    - uses: actions/checkout@v4
+    - name: Checkout Godot
+      uses: actions/checkout@v4
       with:
         repository: godotengine/godot
         path: godot
         ref: ${{ github.event.inputs.godot_ref }}
 
-    - uses: actions/checkout@v4
+    - name: Checkout GodotJS
+      uses: actions/checkout@v4
       with:
         repository: ialex32x/GodotJS
         path: godot/modules/GodotJS
@@ -51,8 +53,8 @@ runs:
         lfs: true
         submodules: recursive
 
-    - name: Deps (Windows)
-      if: ${{ inputs.build_type == 'windows' }}
+    - name: Setup dependencies (Windows/Android)
+      if: ${{ inputs.build_type == 'windows' || inputs.build_type == 'android' }}
       shell: pwsh
       run: |
         Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
@@ -60,18 +62,19 @@ runs:
         7z x -ogodot/modules/GodotJS v8.zip
         dir godot/modules/GodotJS/v8
 
-    - name: Emscripten SDK (Web)
+    - name: Setup Emscripten SDK (Web)
       if: ${{ inputs.build_type == 'web' }}
       uses: actions/checkout@v4
       with:
         repository: emscripten-core/emsdk
         path: emsdk
 
-    - uses: actions/setup-python@v5
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
 
-    - name: Prerequisites
+    - name: Install prerequisites
       shell: cmd
       run: pip install scons
 
@@ -117,7 +120,7 @@ runs:
         scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no
         scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes
 
-    - name: Upload
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.artifact_name }}

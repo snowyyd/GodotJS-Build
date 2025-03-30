@@ -55,7 +55,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build Godot with GodotJS
         uses: ./.github/actions/build_godot/windows
         with:
           artifact_name: prebuilt_windows_x64_${{ matrix.variant }}
@@ -71,7 +71,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build Godot with GodotJS
         uses: ./.github/actions/build_godot/nix
         with:
           artifact_name: prebuilt_linux_x64_${{ matrix.variant }}
@@ -87,7 +87,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build Godot with GodotJS
         uses: ./.github/actions/build_godot/nix
         with:
           artifact_name: prebuilt_macos_arm64_${{ matrix.variant }}
@@ -103,7 +103,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build Godot with GodotJS
         uses: ./.github/actions/build_godot/windows
         with:
           artifact_name: prebuilt_web_${{ matrix.variant }}
@@ -119,7 +119,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build
+      - name: Build Godot with GodotJS
         uses: ./.github/actions/build_godot/windows
         with:
           artifact_name: prebuilt_android_${{ matrix.variant }}
@@ -138,16 +138,17 @@ jobs:
       - prebuilt_android
 
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
         with:
           path: staging_area/
           merge-multiple: false
 
-      - name: re-archive
+      - name: Re-archive artifacts
         run: |
           for dir in $GITHUB_WORKSPACE/staging_area/*/; do dir_name=$(basename "$dir"); cd $dir; 7z a "../${dir_name}.zip" .; rm -rf ./*; done
 
-      - name: release
+      - name: Create release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: GodotJS_${{ github.event.inputs.build_ver_tag }}
