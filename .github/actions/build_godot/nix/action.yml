@@ -61,7 +61,7 @@ runs:
       shell: sh
       run: |
         pip install scons
-        if [[ "${{ inputs.build_type }}" == "linux" ]]; then
+        if [ "${{ inputs.build_type }}" = "linux" ]; then
           sudo apt-get update
           sudo apt-get install -y build-essential pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev
         fi
@@ -71,7 +71,7 @@ runs:
       run: |
         curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
         7z x -ogodot/modules/GodotJS v8.zip
-        if [[ "${{ inputs.build_type }}" == "macOS" ]]; then
+        if [ "${{ inputs.build_type }}" = "macOS" ]; then
           # sh godot/misc/scripts/install_vulkan_sdk_macos.sh
           chmod +x $GITHUB_WORKSPACE/install_vulkan_sdk_macos.sh
           $GITHUB_WORKSPACE/install_vulkan_sdk_macos.sh
@@ -108,7 +108,7 @@ runs:
     - name: Prepare artifacts
       shell: sh
       run: |
-        if [[ "${{ inputs.build_type }}" == "linux" ]]; then
+        if [ "${{ inputs.build_type }}" = "linux" ]; then
           strip staging/bin/godot.linuxbsd.*.x86_64
           chmod +x staging/bin/godot.linuxbsd.*.x86_64
           echo "ARTIFACT_PATH=staging/bin/*.*" >> $GITHUB_ENV
