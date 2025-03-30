@@ -1,0 +1,162 @@
+name: Build All
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_ver_tag:
+        description: 'build version tag ("a.b.c-d", disable publish if empty)'
+        type: string
+        required: false
+        default: ""
+
+      godotjs_ref:
+        description: 'GodotJS ref (branch/tag/SHA)'
+        type: choice
+        options:
+          - "dev"
+          - "main"
+        required: true
+        default: "main"
+  
+      godot_ref:
+        description: 'Godot Engine ref (branch/tag/SHA)'
+        type: string
+        required: true
+        default: "4.4.1-stable"
+
+      deps_package_tag:
+        description: 'deps package tag'
+        type: string
+        required: true
+        default: "v8_12.4.254.21_r13"
+
+      additional_scons_args:
+        description: 'additional scons args'
+        type: string
+        required: false
+        default: ""
+
+      additional_release_notes:
+        description: 'additional release notes'
+        type: string
+        required: false
+        default: ""
+
+env:
+  SCRIPT_AES256_ENCRYPTION_KEY: ${{ secrets.SCRIPT_AES256_ENCRYPTION_KEY || '0000000000000000000000000000000000000000000000000000000000000000' }}
+
+jobs:
+  prebuilt_windows_x64:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        variant: [v8, qjs, qjs_ng]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/build_godot/windows
+        with:
+          artifact_name: prebuilt_windows_x64_${{ matrix.variant }}
+          build_type: windows
+          js_engine: ${{ matrix.variant }}
+
+  prebuilt_linux_x64:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        variant: [v8, qjs, qjs_ng]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/build_godot/nix
+        with:
+          artifact_name: prebuilt_linux_x64_${{ matrix.variant }}
+          build_type: linux
+          js_engine: ${{ matrix.variant }}
+
+  prebuilt_macos_arm64:
+    runs-on: macos-14
+    strategy:
+      matrix:
+        variant: [v8, qjs, qjs_ng] # jsc
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/build_godot/nix
+        with:
+          artifact_name: prebuilt_macos_arm64_${{ matrix.variant }}
+          build_type: macOS
+          js_engine: ${{ matrix.variant }}
+
+  prebuilt_web:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        variant: [wasm, qjs, qjs_ng]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/build_godot/windows
+        with:
+          artifact_name: prebuilt_web_${{ matrix.variant }}
+          build_type: web
+          js_engine: ${{ matrix.variant }}
+
+  prebuilt_android:
+    runs-on: windows-2019
+    strategy:
+      matrix:
+        variant: [v8, qjs, qjs_ng]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/build_godot/windows
+        with:
+          artifact_name: prebuilt_android_${{ matrix.variant }}
+          build_type: android
+          js_engine: ${{ matrix.variant }}
+
+  publish:
+    if: github.event.inputs.build_ver_tag != ''
+
+    runs-on: ubuntu-latest
+    needs: 
+      - prebuilt_windows_x64
+      - prebuilt_linux_x64
+      - prebuilt_macos_arm64
+      - prebuilt_web
+      - prebuilt_android
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: staging_area/
+          merge-multiple: false
+
+      - name: re-archive
+        run: |
+          for dir in $GITHUB_WORKSPACE/staging_area/*/; do dir_name=$(basename "$dir"); cd $dir; 7z a "../${dir_name}.zip" .; rm -rf ./*; done
+
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: GodotJS_${{ github.event.inputs.build_ver_tag }}
+          name: GodotJS_${{ github.event.inputs.build_ver_tag }}
+          body: |
+            ${{ github.event.inputs.additional_release_notes }}
+
+            - GodotJS ${{ github.event.inputs.godotjs_ref }}
+            - Godot ${{ github.event.inputs.godot_ref }}
+            - v8 ${{ github.event.inputs.deps_package_tag }}
+          files: |
+            staging_area/prebuilt_*.zip

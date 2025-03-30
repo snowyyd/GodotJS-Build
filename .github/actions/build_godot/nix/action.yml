@@ -1,0 +1,122 @@
+name: 'Build Godot (Linux/macOS)'
+description: 'Action to build Godot with different configurations'
+
+inputs:
+  js_engine:
+    description: 'The JavaScript engine to use'
+    type: string
+    required: true
+
+  artifact_name:
+    description: 'Name for the artifact'
+    type: string
+    required: true
+
+  build_type:
+    description: 'Build type'
+    type: choice
+    options:
+      - "linux"
+      - "macOS"
+    required: true
+    default: "linux"
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set globals
+      id: globals
+      shell: sh
+      run: |
+        if [ "${{ inputs.js_engine }}" = "qjs" ]; then
+          echo "JS_ENGINE_ARG=use_quickjs=yes" >> "${GITHUB_OUTPUT}"
+        elif [ "${{ inputs.js_engine }}" = "qjs_ng" ]; then
+          echo "JS_ENGINE_ARG=use_quickjs_ng=yes" >> "${GITHUB_OUTPUT}"
+        elif [ "${{ inputs.js_engine }}" = "jsc" ]; then
+          echo "JS_ENGINE_ARG=use_jsc=yes" >> "${GITHUB_OUTPUT}"
+        fi
+
+    - uses: actions/checkout@v4
+      with:
+        repository: godotengine/godot
+        path: godot
+        ref: ${{ github.event.inputs.godot_ref }}
+
+    - uses: actions/checkout@v4
+      with:
+        repository: ialex32x/GodotJS
+        path: godot/modules/GodotJS
+        ref: ${{ github.event.inputs.godotjs_ref }}
+        lfs: true
+        submodules: recursive
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Prerequisites
+      shell: sh
+      run: |
+        pip install scons
+        if [[ "${{ inputs.build_type }}" == "linux" ]]; then
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libx11-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev
+        fi
+
+    - name: Build Deps
+      shell: sh
+      run: |
+        curl -L https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip --output v8.zip
+        7z x -ogodot/modules/GodotJS v8.zip
+        if [[ "${{ inputs.build_type }}" == "macOS" ]]; then
+          # sh godot/misc/scripts/install_vulkan_sdk_macos.sh
+          chmod +x $GITHUB_WORKSPACE/install_vulkan_sdk_macos.sh
+          $GITHUB_WORKSPACE/install_vulkan_sdk_macos.sh
+        fi
+
+    - name: Build for x64 (Linux)
+      if: ${{ inputs.build_type == 'linux' }}
+      shell: sh
+      run: |
+        mkdir -p staging/bin
+        cd godot
+
+        scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+        cp bin/* ../staging/bin/
+        scons --clean ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=linuxbsd ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+
+        scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+        cp bin/* ../staging/bin/
+        scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_debug p=linuxbsd ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+
+        scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+        cp bin/* ../staging/bin/
+        scons --clean ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=linuxbsd ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+
+    - name: Build for arm64 (macOS)
+      if: ${{ inputs.build_type == 'macOS' }}
+      shell: sh
+      run: |
+        cd godot
+        scons ${{ github.event.inputs.additional_scons_args }} dev_build=yes p=macos arch=arm64 ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+        scons ${{ github.event.inputs.additional_scons_args }} target=template_debug p=macos arch=arm64 ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+        scons ${{ github.event.inputs.additional_scons_args }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=macos arch=arm64 ${{ steps.globals.outputs.JS_ENGINE_ARG }}
+
+    - name: Prepare artifact
+      shell: sh
+      run: |
+        if [[ "${{ inputs.build_type }}" == "linux" ]]; then
+          strip staging/bin/godot.linuxbsd.*.x86_64
+          chmod +x staging/bin/godot.linuxbsd.*.x86_64
+          echo "ARTIFACT_PATH=staging/bin/*.*" >> $GITHUB_ENV
+        else
+          strip godot/bin/godot.macos.*.arm64
+          chmod +x godot/bin/godot.macos.*.arm64
+          echo "ARTIFACT_PATH=godot/bin/*.*" >> $GITHUB_ENV
+        fi
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ${{ env.ARTIFACT_PATH }}

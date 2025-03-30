@@ -1,0 +1,124 @@
+name: 'Build Godot (Windows)'
+description: 'Action to build Godot with different configurations'
+
+inputs:
+  js_engine:
+    description: 'The JavaScript engine to use'
+    type: string
+    required: true
+
+  artifact_name:
+    description: 'Name for the artifact'
+    type: string
+    required: true
+
+  build_type:
+    description: 'Build type'
+    type: choice
+    options:
+      - "windows"
+      - "web"
+      - "android"
+    required: true
+    default: "windows"
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set globals
+      id: globals
+      shell: sh
+      run: |
+        if [ "${{ inputs.js_engine }}" = "qjs" ]; then
+          echo "JS_ENGINE_ARG=use_quickjs=yes" >> "${GITHUB_OUTPUT}"
+        elif [ "${{ inputs.js_engine }}" = "qjs_ng" ]; then
+          echo "JS_ENGINE_ARG=use_quickjs_ng=yes" >> "${GITHUB_OUTPUT}"
+        elif [ "${{ inputs.js_engine }}" = "jsc" ]; then
+          echo "JS_ENGINE_ARG=use_jsc=yes" >> "${GITHUB_OUTPUT}"
+        fi
+
+    - uses: actions/checkout@v4
+      with:
+        repository: godotengine/godot
+        path: godot
+        ref: ${{ github.event.inputs.godot_ref }}
+
+    - uses: actions/checkout@v4
+      with:
+        repository: ialex32x/GodotJS
+        path: godot/modules/GodotJS
+        ref: ${{ github.event.inputs.godotjs_ref }}
+        lfs: true
+        submodules: recursive
+
+    - name: Deps (Windows)
+      if: ${{ inputs.build_type == 'windows' }}
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri https://github.com/ialex32x/GodotJS-Dependencies/releases/download/${{ github.event.inputs.deps_package_tag }}/${{ github.event.inputs.deps_package_tag }}.zip -OutFile v8.zip
+        dir v8.zip
+        7z x -ogodot/modules/GodotJS v8.zip
+        dir godot/modules/GodotJS/v8
+
+    - name: Emscripten SDK (Web)
+      if: ${{ inputs.build_type == 'web' }}
+      uses: actions/checkout@v4
+      with:
+        repository: emscripten-core/emsdk
+        path: emsdk
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Prerequisites
+      shell: cmd
+      run: pip install scons
+
+    - name: Build Godot (Windows)
+      if: ${{ inputs.build_type == 'windows' }}
+      shell: cmd
+      run: |
+        cd godot
+        scons ${{ github.event.inputs.additional_scons_args }} ${{ steps.globals.outputs.JS_ENGINE_ARG }} dev_build=yes p=windows
+        scons ${{ github.event.inputs.additional_scons_args }} ${{ steps.globals.outputs.JS_ENGINE_ARG }} target=template_debug
+        scons ${{ github.event.inputs.additional_scons_args }} ${{ steps.globals.outputs.JS_ENGINE_ARG }} target=template_release separate_debug_symbols=yes debug_symbols=yes p=windows
+
+    - name: Build Godot (Web)
+      if: ${{ inputs.build_type == 'web' }}
+      shell: cmd
+      run: |
+        SET EMSDK_PATH=%GITHUB_WORKSPACE%\emsdk
+        SET EMSDK_VERSION=3.1.64
+
+        CALL %EMSDK_PATH%\emsdk.bat update
+        CALL %EMSDK_PATH%\emsdk.bat install %EMSDK_VERSION%
+        CALL %EMSDK_PATH%\emsdk.bat activate %EMSDK_VERSION%
+        CALL %EMSDK_PATH%\emsdk_env.bat
+
+        cd godot
+        scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} dev_build=yes optimize=debug p=web deprecated=no target=template_debug lto=none use_assertions=no use_safe_heap=yes ${{ github.event.inputs.additional_scons_args }}
+        scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} dev_build=no p=web deprecated=no target=template_release lto=auto use_assertions=no use_safe_heap=no ${{ github.event.inputs.additional_scons_args }}
+
+    - name: Build Godot (Android)
+      if: ${{ inputs.build_type == 'android' }}
+      shell: cmd
+      run: |
+        echo %JAVA_HOME_17_X64%
+
+        SET JAVA_HOME=%JAVA_HOME_17_X64%
+        SET ANDROID_API_LEVEL=24
+
+        cd godot
+
+        scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no
+        scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} ${{ github.event.inputs.additional_scons_args }} p=android target=template_debug   ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes
+
+        scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=x86_64 deprecated=no
+        scons ${{ steps.globals.outputs.JS_ENGINE_ARG }} ${{ github.event.inputs.additional_scons_args }} p=android target=template_release ndk_platform=android-%ANDROID_API_LEVEL% arch=arm64  deprecated=no generate_apk=yes
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: godot/bin/*.*
